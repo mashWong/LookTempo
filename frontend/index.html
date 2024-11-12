@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vite App</title>
+  <script>
+    const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4')
+      .then(FingerprintJS => FingerprintJS.load())
+
+    fpPromise
+      .then(fp => fp.get())
+      .then(result => {
+        window.fingerprint = result.visitorId;
+        document.cookie = 'key=' + window.fingerprint;
+      })
+  </script>
+  <script type="module" crossorigin src="/assets/index-CfQP00CV.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Cv9-MmbK.css">
+</head>
+
+<body>
+  <div id="app"></div>
+</body>
+
+</html>
