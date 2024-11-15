@@ -7,7 +7,7 @@ import * as path from 'path';
 export class StaticFilterMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const referer = req.headers.referer;
-    const allowedReferrer = ['http://57.155.50.233:9000/', 'http://localhost:9000/', 'http://localhost:5173/'];
+    const allowedReferrer = ['http://20.39.199.107:9000/', 'http://localhost:9000/', 'http://localhost:5173/'];
 
     if (!referer || !allowedReferrer.includes(referer)) {
       res.status(403).send('Forbidden');
