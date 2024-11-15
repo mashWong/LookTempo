@@ -1,19 +1,16 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppService } from './app.service';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggingInterceptor } from './interceptor';
 import { VideoController } from './video.controller';
-
+import { AppController } from './app.controller';
+import { IpFilterMiddleware } from './middleware/ip-filter.middleware';
 
 @Module({
   imports: [],
-  controllers: [VideoController],
-  providers: [AppService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
-    },
-  ],
+  controllers: [VideoController, AppController],
+  providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(IpFilterMiddleware).forRoutes('*');
+  }
+}

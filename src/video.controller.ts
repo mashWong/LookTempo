@@ -1,14 +1,18 @@
-import { Controller, Get, Res, HttpException, HttpStatus, Req } from '@nestjs/common';
+import { Controller, Get, Res, HttpException, HttpStatus, Req, Param, Query } from '@nestjs/common';
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { promises as fsPromises } from 'fs';
+import * as fs from 'fs';
 
-@Controller('api/video')
+@Controller('video')
 export class VideoController {
-  private filePath = join(__dirname, '..', 'static', '1000.mp4'); // 替换为你的视频文件路径
 
   @Get('stream')
-  async streamVideo(@Req() req, @Res() res) {
+  async streamVideo(
+    @Query('name') name: string,
+    @Req() req,
+    @Res() res
+  ) {
     try {
       const range = req.headers.range;
       const referer = req.headers.referer;
@@ -16,28 +20,40 @@ export class VideoController {
         throw new HttpException('Requires Range header', 406)
       }
       if (!referer) {
-        // console.error('reffer is not correct ' + referer);
         throw new HttpException('Requires Range header', 401)
       }
+      if (!name) {
+        throw new HttpException('error', 403)
+      }
 
-      const { size } = await fsPromises.stat(this.filePath);
+      const filePath = join(__dirname, '..', 'static', name + '.mp4');
+      const stat = fs.statSync(filePath);
 
-      const CHUNK_SIZE = 800 * 1024;
-      const start = Number(range.replace(/\D/g, ''));
-      const end = Math.min(start + CHUNK_SIZE, size - 1);
+      const fileSize = stat.size;
 
-      const contentLength = end - start + 1;
-      const headers = {
-        'Content-Range': `bytes ${start}-${end}/${size}`,
+      const { size } = await fsPromises.stat(filePath);
+
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+      if (start >= fileSize) {
+        res.status(416).send('Requested range not satisfiable\n' + start + ' >= ' + fileSize);
+        return;
+      }
+
+      const chunksize = (end - start) + 1;
+      const file = fs.createReadStream(filePath, { start, end });
+      const head = {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
         'Accept-Ranges': 'bytes',
-        'Content-Length': contentLength,
+        'Content-Length': chunksize,
         'Content-Type': 'video/mp4',
       };
 
-      res.writeHead(206, headers);
+      res.writeHead(206, head);
+      file.pipe(res);
 
-      const videoStream = createReadStream(this.filePath, { start, end });
-      videoStream.pipe(res);
     } catch (error) {
       throw new HttpException('Failed to stream video', HttpStatus.INTERNAL_SERVER_ERROR);
     }
