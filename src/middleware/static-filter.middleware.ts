@@ -6,10 +6,10 @@ import * as path from 'path';
 @Injectable()
 export class StaticFilterMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    const referer = req.headers.referer || req.headers.referrer;
-    const allowedReferrer = 'http://57.155.50.233:9000/';
+    const referer = req.headers.referer;
+    const allowedReferrer = ['http://57.155.50.233:9000/', 'http://localhost:9000/', 'http://localhost:5173/'];
 
-    if (!referer || referer !== allowedReferrer) {
+    if (!referer || !allowedReferrer.includes(referer)) {
       res.status(403).send('Forbidden');
       return;
     }
