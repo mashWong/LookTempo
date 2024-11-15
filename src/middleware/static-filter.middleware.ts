@@ -1,15 +1,17 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import * as express from 'express';
 import * as path from 'path';
 
 @Injectable()
 export class StaticFilterMiddleware implements NestMiddleware {
+  private readonly logger = new Logger(StaticFilterMiddleware.name);
   use(req: Request, res: Response, next: NextFunction) {
     const referer = req.headers.referer;
     const allowedReferrer = ['http://20.39.199.107:9000/', 'http://localhost:9000/', 'http://localhost:5173/'];
 
     if (!referer || !allowedReferrer.includes(referer)) {
+      this.logger.error('referer not allowed:', referer);
       res.status(403).send('Forbidden');
       return;
     }
