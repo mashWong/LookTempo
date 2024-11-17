@@ -15,9 +15,9 @@ export class IpFilterMiddleware implements NestMiddleware {
         if (ipInfo && ipInfo.country !== 'CN') {
             next();
         } else {
-            next();
-            // this.logger.error('IP not allowed:', ip);
-            // res.status(403).send('Forbidden');
+            // next();
+            this.logger.error('IP not allowed:', ip);
+            res.status(403).send('Forbidden');
         }
     }
 }

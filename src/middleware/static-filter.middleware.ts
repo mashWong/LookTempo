@@ -12,11 +12,11 @@ export class StaticFilterMiddleware implements NestMiddleware {
       'http://20.39.199.107/', 'http://looktempo.giize.com/'
     ];
 
-    // if (!referer || !allowedReferrer.includes(referer)) {
-    // this.logger.error('referer not allowed:', referer);
-    //   res.status(403).send('Forbidden');
-    //   return;
-    // }
+    if (!referer || !allowedReferrer.includes(referer)) {
+      this.logger.error('referer not allowed:', referer);
+      res.status(403).send('Forbidden');
+      return;
+    }
 
     // 根据请求路径决定返回哪个目录下的静态文件
     let staticDir = path.join(__dirname, '../../', 'static');
