@@ -15,7 +15,8 @@ export class IpFilterMiddleware implements NestMiddleware {
             next();
         } else {
             // next();
-            this.logger.error('IP not allowed:', ip);
+            Logger.log('IP not allowed:', ip);
+            // this.logger.error('IP not allowed:', ip);
             res.status(403).send('Forbidden');
         }
     }
