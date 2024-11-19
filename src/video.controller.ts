@@ -1,6 +1,5 @@
-import { Controller, Get, Res, HttpException, HttpStatus, Req, Param, Query } from '@nestjs/common';
+import { Controller, Get, Res, HttpException, HttpStatus, Req, Query } from '@nestjs/common';
 import { join } from 'path';
-import { promises as fsPromises } from 'fs';
 import * as fs from 'fs';
 
 @Controller('video')
@@ -12,13 +11,17 @@ export class VideoController {
     @Req() req,
     @Res() res
   ) {
+    const range = req.headers.range;
+    const referer = req.headers.referer;
+    const allowedReferrer = ['http://20.39.199.107:9000/', 'http://localhost:9000/', 'http://localhost:5173/',
+      'http://20.39.199.107/', 'http://looktempo.giize.com/'
+    ];
+
     try {
-      const range = req.headers.range;
-      const referer = req.headers.referer;
       if (!range) {
         throw new HttpException('Requires Range header', 406)
       }
-      if (!referer) {
+      if (!referer || !allowedReferrer.includes(referer)) {
         throw new HttpException('Requires Range header', 401)
       }
       if (!name) {
