@@ -11,7 +11,6 @@ export class IpFilterMiddleware implements NestMiddleware {
         const ip = req.ip || req.connection.remoteAddress;
         let ipInfo = geoip.lookup(ip);
 
-        // this.logger.error('ipInfo:', ipInfo && ipInfo.country);
         if (ipInfo && ipInfo.country !== 'CN') {
             next();
         } else {

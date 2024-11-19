@@ -13,7 +13,6 @@ export class StaticFilterMiddleware implements NestMiddleware {
     ];
 
     if (!referer || !allowedReferrer.includes(referer)) {
-      this.logger.error('referer not allowed:', referer);
       res.status(403).send('Forbidden');
       return;
     }

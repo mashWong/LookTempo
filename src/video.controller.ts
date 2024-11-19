@@ -1,5 +1,4 @@
 import { Controller, Get, Res, HttpException, HttpStatus, Req, Param, Query } from '@nestjs/common';
-import { createReadStream } from 'fs';
 import { join } from 'path';
 import { promises as fsPromises } from 'fs';
 import * as fs from 'fs';
@@ -30,8 +29,6 @@ export class VideoController {
       const stat = fs.statSync(filePath);
 
       const fileSize = stat.size;
-
-      const { size } = await fsPromises.stat(filePath);
 
       const parts = range.replace(/bytes=/, '').split('-');
       const start = parseInt(parts[0], 10);
