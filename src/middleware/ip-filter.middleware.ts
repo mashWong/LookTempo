@@ -12,6 +12,7 @@ export class IpFilterMiddleware implements NestMiddleware {
         let ipInfo = geoip.lookup(ip);
 
         if (ipInfo && ipInfo.country !== 'CN') {
+            Logger.log('IP allowed:', ip);
             next();
         } else {
             // next();
