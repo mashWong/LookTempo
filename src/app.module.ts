@@ -12,6 +12,9 @@ import { LoggerService } from './service/loggers.service';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(IpFilterMiddleware).forRoutes('*');
+    consumer
+      .apply(IpFilterMiddleware)
+      .exclude('/api/loggers')
+      .forRoutes('*');
   }
 }
