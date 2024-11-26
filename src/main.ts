@@ -8,7 +8,10 @@ async function bootstrap() {
 
   // 服务静态文件
   app.useStaticAssets('frontend', {
-    prefix: '/', // 可以自定义前缀
+    prefix: '/',
+  });
+  app.useStaticAssets('frontend', {
+    prefix: '/traces',
   });
   app.use('/images', new StaticFilterMiddleware().use);
 

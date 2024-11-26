@@ -15,7 +15,8 @@ export class AppController {
   @Get('list')
   async getPngFiles(@Req() req: Request, @Res() res: Response): Promise<Response> {
 
-    this.recordLogger(req.headers.cookie);
+    const chinaTime = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+    this.recordLogger(req.headers.cookie, chinaTime);
 
     try {
       const files = await this.appService.getPngFiles();
@@ -33,22 +34,13 @@ export class AppController {
     return res.json(logsContent);
   }
 
-  recordLogger(cookie: any) {
+  recordLogger(cookie: any, chinaTime: string) {
     const list = cookie.split(';');
-    const keyList = ['acb8da6c7c2d630d12559c1c5280ae96', '']
-  
-    list.forEach(item => {
+    list.forEach((item: string) => {
       if (item.indexOf('key=') !== -1) {
         const key = item.replace('key=', '');
         console.log(key);
-        if (!keyList.includes(key)) {
-          let time = new Date();
-          const month = String(time.getMonth() + 1).padStart(2, '0');
-          const day = String(time.getDate()).padStart(2, '0');
-          const hours = String(time.getHours()).padStart(2, '0');
-          const minutes = String(time.getMinutes()).padStart(2, '0');
-          this.LoggerService.log(month + '月' + day + '日' + hours + '时' + minutes + '分' + ': ' + key);
-        }
+        this.LoggerService.log(chinaTime + key);
       }
     })
   }
