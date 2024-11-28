@@ -26,22 +26,6 @@ export class AppController {
     }
   }
 
-  @Get('loggers')
-  getLoggers(@Res() res: Response) {
-    const filePath = path.join(__dirname, '../logs/combined.log');
-    let logsContent = fs.readFileSync(filePath, 'utf-8');
-
-    return res.json(logsContent);
-  }
-
-  @Get('videologger')
-  getVideologger(@Res() res: Response) {
-    const filePath = path.join(__dirname, '../logs/info.log');
-    let logsContent = fs.readFileSync(filePath, 'utf-8');
-
-    return res.json(logsContent);
-  }
-
   recordLogger(cookie: any, chinaTime: string, zone: string) {
     const list = cookie.split(';');
     list.forEach((item: string) => {

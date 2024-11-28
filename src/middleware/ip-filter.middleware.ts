@@ -14,10 +14,10 @@ export class IpFilterMiddleware implements NestMiddleware {
         if (ipInfo && ipInfo.country !== 'CN') {
             next();
         } else {
-            next();
+            // next();
             // Logger.log('IP not allowed:', ip);
             // this.logger.error('IP not allowed:', ip);
-            // res.status(403).send('Forbidden');
+            res.status(403).send('Forbidden');
         }
     }
 }
