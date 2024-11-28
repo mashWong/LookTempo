@@ -1,9 +1,13 @@
 import { Controller, Get, Res, HttpException, HttpStatus, Req, Query } from '@nestjs/common';
 import { join } from 'path';
 import * as fs from 'fs';
+import { LoggerService } from './service/loggers.service';
 
 @Controller('video')
 export class VideoController {
+  constructor(
+    private readonly LoggerService: LoggerService
+  ) { }
 
   @Get('stream')
   async streamVideo(
@@ -42,6 +46,10 @@ export class VideoController {
         return;
       }
 
+      if (start === 0) {
+        this.recordLogger(req.headers.cookie, name);
+      }
+
       const chunksize = (end - start) + 1;
       const file = fs.createReadStream(filePath, { start, end });
       const head = {
@@ -57,5 +65,16 @@ export class VideoController {
     } catch (error) {
       throw new HttpException('Failed to stream video', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  recordLogger(cookie: any, name: string) {
+    const chinaTime = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+    const list = cookie.split(';');
+    list.forEach((item: string) => {
+      if (item.indexOf('key=') !== -1) {
+        const key = item.replace('key=', '');
+        this.LoggerService.debug(chinaTime + '  ' + key + ' ' + name + '');
+      }
+    })
   }
 }
