@@ -30,7 +30,7 @@ export class AppController {
     const list = cookie.split(';');
     list.forEach((item: string) => {
       if (item.indexOf('key=') !== -1) {
-        const key = item.replace('key=', '');
+        const key = item.replace('key=', '').replace(/\s+/g, '');
         if (key === 'dfc0be52bd9b386bd229308d8eff2f8f' || key === 'ecc79ad93b7dea8b068f6856bbd99b10') return;
         this.LoggerService.log(chinaTime + '  ' + key + ' ' + zone + '');
       }
