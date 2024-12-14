@@ -2,8 +2,6 @@ import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
 import { LoggerService } from './service/loggers.service';
-import * as fs from 'fs';
-import * as path from 'path';
 
 @Controller('api')
 export class AppController {
