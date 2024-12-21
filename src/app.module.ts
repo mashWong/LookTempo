@@ -6,13 +6,27 @@ import { IpFilterMiddleware } from './middleware/ip-filter.middleware';
 import { LoggerService } from './service/loggers.service';
 import { LoggersController } from './controller/logger.controller';
 import { TwitterService } from './service/twitter.service';
-import { AuthController } from './controller/auth.controller';
-
+import { PayPalService } from './service/paypal.service';
+import { PaymentController } from './controller/pay.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserModule } from './module/user.module';
 
 @Module({
-  imports: [],
-  controllers: [VideoController, AppController, LoggersController, AuthController],
-  providers: [AppService, LoggerService, TwitterService],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: '127.0.0.1',
+      port: 3306,
+      username: 'root',
+      password: '00000000',
+      database: 'looktempo',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    }),
+    UserModule,
+  ],
+  controllers: [VideoController, AppController, LoggersController, PaymentController],
+  providers: [AppService, LoggerService, TwitterService, PayPalService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

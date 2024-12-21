@@ -1,7 +1,8 @@
-import { Controller, Get, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards, Body } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
 import { LoggerService } from './service/loggers.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api')
 export class AppController {
@@ -24,13 +25,19 @@ export class AppController {
     }
   }
 
+  @Post('feedback')
+  @UseGuards(AuthGuard('jwt'))
+  async doFeedback(@Body() body: { content: string }) {
+    return 'ok'
+  }
+
   recordLogger(cookie: any, chinaTime: string, zone: string) {
     const list = cookie.split(';');
     list.forEach((item: string) => {
       if (item.indexOf('key=') !== -1) {
         const key = item.replace('key=', '').replace(/\s+/g, '');
         if (key === 'dfc0be52bd9b386bd229308d8eff2f8f' || key === 'ecc79ad93b7dea8b068f6856bbd99b10') return;
-        this.LoggerService.log(chinaTime + '  ' + key + ' ' + zone + '');
+        // this.LoggerService.log(chinaTime + '  ' + key + ' ' + zone + '');
       }
     })
   }

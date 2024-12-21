@@ -8,13 +8,6 @@ import * as passport from 'passport';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // 全局启用 CORS
-  app.enableCors({
-    origin: true, // 允许所有源或指定具体的域名/域名列表
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // 如果需要发送 cookie
-    allowedHeaders: 'Content-Type,Authorization', // 允许的请求头
-  });
   // 设置session middleware
   app.use(
     session({
