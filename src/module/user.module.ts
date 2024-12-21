@@ -15,7 +15,7 @@ import { PayPalService } from '../service/paypal.service';
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
             secret: '00000000000000000000000000000000',
-            signOptions: { expiresIn: '12h' },
+            signOptions: { expiresIn: '60s' },
         }),
     ],
     providers: [UserService, JwtStrategy, JwtGuard, UserService, PayPalService],

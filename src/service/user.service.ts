@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
-import e from 'express';
 
 @Injectable()
 export class UserService {
@@ -45,11 +44,16 @@ export class UserService {
     async updatePayment(userId: string, subscribed: string): Promise<boolean> {
         let res = await this.userRepository.update({ userId: userId },
             { subscribed: subscribed, checkSubTime: subscribed === '0' ? '' : new Date().getTime().toString() });
-        console.log('updatePayment res: ', res.affected);
         if (res.affected === 1) {
             return true;
         } else {
             return false;
         }
+    }
+
+    async updateSouces(userId: string, source: string): Promise<boolean> {
+        let res = await this.userRepository.update({ userId: userId },
+            { source: source });
+        return res.affected === 1;
     }
 }

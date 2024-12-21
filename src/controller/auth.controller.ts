@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards, Post, Request } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards, Query, Request } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
@@ -15,7 +15,7 @@ export class AuthController {
 
     @Get('twitter')
     @UseGuards(AuthGuard('twitter'))
-    async twitterLogin(@Req() req: Request) {
+    async twitterLogin() {
         // 此方法会触发认证流程
     }
 
@@ -49,12 +49,17 @@ export class AuthController {
 
     @Get('profile')
     @UseGuards(AuthGuard('jwt'))
-    async getProfile(@Request() req, @Res() res) {
+    async getProfile(@Request() req, @Res() res, @Query('souces') souces: string) {
         this.userService.findOneByUserId(req.user.userId).then(info => {
 
             if (info === null) {
                 res.status(401).send('no way');
                 return;
+            }
+
+            // 写入souces
+            if (info.source.length === 0 && souces) {
+                this.userService.updateSouces(req.user.userId, souces);
             }
 
             if (info.subscribed !== '0' && new Date().getTime() - parseInt(info.checkSubTime) > (1000 * 60 * 60 * 24)) {
