@@ -6,16 +6,26 @@ import { IpFilterMiddleware } from './middleware/ip-filter.middleware';
 import { LoggerService } from './service/loggers.service';
 import { LoggersController } from './controller/logger.controller';
 import { TwitterService } from './service/twitter.service';
-import { PayPalService } from './service/paypal.service';
-import { PaymentController } from './controller/pay.controller';
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// import { UserModule } from './module/user.module';
+// import { PayPalService } from './service/paypal.service';
+// import { PaymentController } from './controller/pay.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserModule } from './module/user.module';
 
 @Module({
   imports: [
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: '20.39.199.107',
+      port: 3306,
+      username: 'look',
+      password: 'Blast782012',
+      database: 'looktempo',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    }),
     // TypeOrmModule.forRoot({
     //   type: 'mysql',
-    //   host: '127.0.0.1',
+    //   host: 'localhost',
     //   port: 3306,
     //   username: 'root',
     //   password: '00000000',
@@ -23,7 +33,7 @@ import { PaymentController } from './controller/pay.controller';
     //   entities: [__dirname + '/**/*.entity{.ts,.js}'],
     //   synchronize: true,
     // }),
-    // UserModule,
+    UserModule,
   ],
   controllers: [VideoController, AppController, LoggersController],
   providers: [AppService, LoggerService, TwitterService],

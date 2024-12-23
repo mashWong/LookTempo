@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { StaticFilterMiddleware } from './middleware/static-filter.middleware';
 import * as session from 'express-session';
 import * as passport from 'passport';
+import { IpFilterMiddleware } from './middleware/ip-filter.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -21,6 +22,7 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  app.use(new IpFilterMiddleware().use);
   // 服务静态文件
   app.useStaticAssets('frontend', {
     prefix: '/',

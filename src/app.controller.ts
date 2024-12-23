@@ -14,8 +14,8 @@ export class AppController {
   @Get('list')
   async getPngFiles(@Req() req: Request, @Res() res: Response): Promise<Response> {
 
-    const chinaTime = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
-    this.recordLogger(req.headers.cookie, chinaTime, req.query.zone.toString());
+    // const chinaTime = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+    // this.recordLogger(req.headers.cookie, chinaTime, req.query.zone.toString());
 
     try {
       const files = await this.appService.getPngFiles();
