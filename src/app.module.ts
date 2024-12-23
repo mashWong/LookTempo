@@ -15,28 +15,16 @@ import { UserModule } from './module/user.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '20.39.199.107',
+      host: '127.0.0.1', // 20.39.199.10
       port: 3306,
       username: 'look',
       password: 'Blast782012',
       database: 'looktempo',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
+      synchronize: false,
+      retryAttempts: 3,
+      retryDelay: 3000,
     }),
-
-    // TypeOrmModule.forRoot({
-    //   type: 'mssql',
-    //   host: 'looksql.database.windows.net',
-    //   port: 1433,
-    //   username: 'looksql',
-    //   password: 'Blast782012',
-    //   database: 'looktempo',
-    //   entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    //   options: {
-    //     encrypt: true,
-    //   },
-    //   synchronize: true,
-    // }),
     UserModule,
   ],
   controllers: [VideoController, AppController, LoggersController],
