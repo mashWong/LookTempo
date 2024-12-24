@@ -14,8 +14,8 @@ import { PayPalService } from '../service/paypal.service';
         TypeOrmModule.forFeature([User]),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
-            secret: '00000000000000000000000000000000',
-            signOptions: { expiresIn: '60s' },
+            secret: '000000',
+            signOptions: { expiresIn: '30d' },
         }),
     ],
     providers: [UserService, JwtStrategy, JwtGuard, UserService, PayPalService],

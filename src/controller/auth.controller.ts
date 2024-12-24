@@ -28,7 +28,8 @@ export class AuthController {
         });
 
         this.handleAccount(req.user).then(() => {
-            res.redirect('http://localhost:5173');
+            res.redirect('http://looktempo.giize.com/');
+            // res.redirect('http://localhost:5173');
         })
     }
 

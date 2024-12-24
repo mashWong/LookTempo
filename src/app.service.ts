@@ -9,8 +9,8 @@ export class AppService {
   async getPngFiles(): Promise<string[]> {
     try {
       const files = await fs.promises.readdir(this.directoryPath);
-      const mapFiles = ['Miniskirt - AOA.avif', 'RED - HYUNA.avif', 'girls - aespa.avif', 'Whiplash - aespa.avif', 'LIKE THAT - BABYMONSTER.avif',
-        'FOREVER - BABYMONSTER.avif', 'Goodnight Kiss.avif', 'black dress - clc.avif'
+      const mapFiles = ['Red Velvet & Aespa - Beautiful Christmas.avif', 'jennie - Mantra.avif', 'Miniskirt - AOA.avif', 'girls - aespa.avif', 'Whiplash - aespa.avif', 'LIKE THAT - BABYMONSTER.avif',
+        'FOREVER - BABYMONSTER.avif'
       ];
       const pngFiles = files.filter(file => path.extname(file).toLowerCase() === '.avif');
 

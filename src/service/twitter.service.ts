@@ -7,9 +7,9 @@ export class TwitterService extends PassportStrategy(Strategy, 'twitter') {
     // AAAAAAAAAAAAAAAAAAAAAH0OxgEAAAAAkgW%2BuFb0sHsm8gVpIoe0%2B3yZcHg%3DUEVsPytEz2ILnZ6E6OvBwSIKHMhCh9HARMDOkZ2t0sCZlJRPHO
     constructor() {
         super({
-            consumerKey: 'ZyQJKae9Jf2gvbKW3P5tsqTW1',
-            consumerSecret: 'dZB1aMe5sFx7QtEH5eHdiKLgjpT9X8TZBzLwJNNOcxba32Ksw7',
-            callbackURL: 'http://localhost:5173/api/auth/twitter/redirect',
+            consumerKey: '3FWN0UwgIAbm3WfyT2vzryHFP',
+            consumerSecret: 'jYgv6Vlng2fc34Dr9fglu5bw2y0UqWFnN85jdirsY4yKuIv7te',
+            callbackURL: 'http://looktempo.giize.com/api/auth/twitter/redirect',
         });
     }
 

@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                 return token;
             }]),
             ignoreExpiration: false,
-            secretOrKey: '00000000000000000000000000000000',
+            secretOrKey: '000000',
         });
     }
 
