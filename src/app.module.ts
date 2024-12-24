@@ -14,16 +14,16 @@ import { UserModule } from './module/user.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: '127.0.0.1', // 20.39.199.10
-      port: 3306,
-      username: 'look',
-      password: 'Blast782012',
-      database: 'looktempo',
+      type: 'sqlite',
+      // host: '127.0.0.1', // 20.39.199.10
+      // port: 3306,
+      // username: 'look',
+      // password: 'Blast782012',
+      database: 'looktempo.db',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: false,
-      retryAttempts: 3,
-      retryDelay: 3000,
+      synchronize: true,
+      // retryAttempts: 3,
+      // retryDelay: 3000,
     }),
     UserModule,
   ],
