@@ -2,12 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
+import { Feedback } from '../entities/feedback.entity';
+
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
+        @InjectRepository(Feedback)
+        private feedbackRepository: Repository<Feedback>,
     ) { }
 
     findAll(): Promise<User[]> {
@@ -55,5 +59,18 @@ export class UserService {
         let res = await this.userRepository.update({ userId: userId },
             { source: source });
         return res.affected === 1;
+    }
+
+    addFeedback(content: string, user: any): Promise<Feedback> {
+        return this.feedbackRepository.save({
+            context: content,
+            userId: user.userId,
+            userName: user.name,
+            creatTime: new Date().getTime().toString()
+        });
+    }
+
+    findAllFeedback(): Promise<Feedback[]> {
+        return this.feedbackRepository.find();
     }
 }

@@ -8,7 +8,6 @@ import { LoggersController } from './controller/logger.controller';
 import { TwitterService } from './service/twitter.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './module/user.module';
-import { FeedbackModule } from './module/feedback.module';
 
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { FeedbackModule } from './module/feedback.module';
       synchronize: true,
     }),
     UserModule,
-    // FeedbackModule,
   ],
   controllers: [VideoController, AppController, LoggersController],
   providers: [AppService, LoggerService, TwitterService],

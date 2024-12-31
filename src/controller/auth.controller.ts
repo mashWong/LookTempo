@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards, Query, Request } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards, Query, Request, Post, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/entities/user.entity';
@@ -80,5 +80,12 @@ export class AuthController {
                 res.json(info);
             }
         });
+    }
+
+    @Post('feedback')
+    @UseGuards(AuthGuard('jwt'))
+    async doFeedback(@Body() body: { content: string }, @Req() @Request() req) {
+        if (body.content) this.userService.addFeedback(body.content, req.user);
+        return 'ok'
     }
 }
