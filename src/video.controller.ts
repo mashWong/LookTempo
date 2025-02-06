@@ -1,7 +1,9 @@
-import { Controller, Get, Res, HttpException, HttpStatus, Req, Query } from '@nestjs/common';
+import { Controller, Get, Res, HttpException, HttpStatus, Req, Query, UseGuards } from '@nestjs/common';
 import { join } from 'path';
 import * as fs from 'fs';
 import { LoggerService } from './service/loggers.service';
+import { AuthGuard } from '@nestjs/passport';
+
 
 @Controller('video')
 export class VideoController {
@@ -46,9 +48,7 @@ export class VideoController {
         return;
       }
 
-      if (start === 0) {
-        this.recordLogger(req.headers.cookie, name);
-      }
+      this.recordLogger(req.headers.cookie, name + ': ' + (end / fileSize).toFixed(2));
 
       const chunksize = (end - start) + 1;
       const file = fs.createReadStream(filePath, { start, end });
@@ -64,6 +64,39 @@ export class VideoController {
 
     } catch (error) {
       throw new HttpException('Failed to stream video', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get('download')
+  @UseGuards(AuthGuard('jwt')) // 使用 JWT 认证守卫
+  async downloadVideo(
+    @Query('name') name: string,
+    @Req() req,
+    @Res() res
+  ) {
+    try {
+      if (!name) {
+        throw new HttpException('Video name is required', 403);
+      }
+
+      const filePath = join(__dirname, '..', 'static', name + '.mp4');
+      const stat = fs.statSync(filePath);
+
+      const fileSize = stat.size;
+
+      const head = {
+        'Content-Length': fileSize,
+        'Content-Type': 'video/mp4',
+        'Content-Disposition': `attachment; filename="${name}.mp4"`,
+      };
+
+      res.writeHead(200, head);
+      fs.createReadStream(filePath).pipe(res);
+
+      this.recordLogger(req.headers.cookie, name);
+
+    } catch (error) {
+      throw new HttpException('Failed to download video', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

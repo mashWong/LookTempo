@@ -88,4 +88,27 @@ export class AuthController {
         if (body.content) this.userService.addFeedback(body.content, req.user);
         return 'ok'
     }
+
+    @Post('editUserSubscribed')
+    @UseGuards(AuthGuard('jwt'))
+    async editUserSubscribed(@Body() body: {
+        subscribeId: string,
+        userId: string
+    }, @Req() @Request() req, @Res() res) {
+        // 检查用户权限
+        if (req.user.userId !== '1838518568184610816') {
+            res.status(403).send('no way')
+            return
+        }
+        // 检查subscribeId是否正确
+        this.paypalService.querySubscription(body.subscribeId).then(subscription => {
+            console.log('subscription: ', subscription);
+            if (subscription.status === 'ACTIVE') {
+                this.userService.updatePayment(body.userId, body.subscribeId);
+                res.status(200).send('ok')
+            } else {
+                res.status(403).send('subscribeId is not correct')
+            }
+        });
+    }
 }

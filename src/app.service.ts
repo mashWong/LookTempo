@@ -10,8 +10,14 @@ export class AppService {
     try {
       const files = await fs.promises.readdir(this.directoryPath);
       const mapFiles = [
-        'Red Velvet X Aespa - Beautiful Christmas.avif',
+        'IVE - I AM.avif',
+        'AOA - like a cat.avif',
+        'IVE - REBEL HEART.avif',
+        "Girls' Generation - taxi.avif",
+        'Amateur - Nice Body.avif',
+        'ITZY - WANNABE.avif',
         'Jun Hyoseong - Into you.avif',
+        'Red Velvet X Aespa - Beautiful Christmas.avif',
         'T-ARA - 숨바꼭질.avif',
         'jennie - Mantra.avif',
         'Miniskirt - AOA.avif',
