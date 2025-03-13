@@ -100,6 +100,13 @@ export class AuthController {
             res.status(403).send('no way')
             return
         }
+        // 是否取消订阅
+        if (body.subscribeId === '0') {
+            // 取消订阅
+            this.userService.updatePayment(body.userId, '0');
+            res.status(200).send('ok')
+            return;
+        }
         // 检查subscribeId是否正确
         this.paypalService.querySubscription(body.subscribeId).then(subscription => {
             console.log('subscription: ', subscription);
