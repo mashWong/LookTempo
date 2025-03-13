@@ -15,7 +15,7 @@ export class Film {
     number: string;
 
     @Column()
-    isFree: number;
+    isSub: number;
 
     @Column()
     poster: string;

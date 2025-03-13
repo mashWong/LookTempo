@@ -13,8 +13,8 @@ export class IpFilterMiddleware implements NestMiddleware {
         if (ipInfo && ipInfo.country !== 'CN') {
             next();
         } else {
-            // res.status(403).send('Sorry! Not in the service area');
-            next();
+            res.status(403).send('Sorry! Not in the service area');
+            // next();
         }
     }
 }

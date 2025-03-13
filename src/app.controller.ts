@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, Param, Query } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
 import { LoggerService } from './service/loggers.service';
 import { UserService } from './service/user.service';
+import { B2Service } from './service/B2.service';
 
 
 @Controller('api')
@@ -11,6 +12,7 @@ export class AppController {
     private readonly appService: AppService,
     private readonly LoggerService: LoggerService,
     private readonly userService: UserService,
+    private readonly b2Service: B2Service
   ) { }
 
   @Get('list')
@@ -44,6 +46,41 @@ export class AppController {
       res.json(list);
     } catch (error) {
       return res.status(500).json({ error: error.message });
+    }
+  }
+
+  @Get('goods')
+  async getAllGoods(@Res() res: Response): Promise<Response> {
+    console.log('goods')
+    try {
+      let list = await this.userService.findAllFeedback();
+      res.json(list);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  @Get('presigned-url/:filePath')
+  async getPresignedUrl(
+    @Param('filePath') filePath: string,
+    @Query('validDuration') validDuration?: number,
+  ) {
+    console.log('getPresignedUrl', filePath, validDuration);
+    try {
+      const url = await this.b2Service.getPresignedUrl(filePath, validDuration);
+      return { success: true, url };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  @Get('B2init')
+  async initialize() {
+    try {
+      await this.b2Service.initialize();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
   }
 

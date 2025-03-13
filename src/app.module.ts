@@ -8,6 +8,8 @@ import { LoggersController } from './controller/logger.controller';
 import { TwitterService } from './service/twitter.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './module/user.module';
+import { B2Controller } from './controller/b2.controller';
+import { B2Service } from './service/B2.service';
 
 @Module({
   imports: [
@@ -19,8 +21,8 @@ import { UserModule } from './module/user.module';
     }),
     UserModule,
   ],
-  controllers: [VideoController, AppController, LoggersController],
-  providers: [AppService, LoggerService, TwitterService],
+  controllers: [VideoController, AppController, LoggersController, B2Controller],
+  providers: [AppService, LoggerService, TwitterService, B2Service],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

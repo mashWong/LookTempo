@@ -11,6 +11,11 @@ export class AppService {
       const files = await fs.promises.readdir(this.directoryPath);
       const mapFiles = [
         'IVE - I AM.avif',
+        'Illusion - DuaLipa.avif',
+        'TOO BAD - GD.avif',
+        'UP - KARINA.avif',
+        'Really Like You - BABYMONSTER.avif',
+        'MINNIE - HER.avif',
         'AOA - like a cat.avif',
         'IVE - REBEL HEART.avif',
         "Girls' Generation - taxi.avif",
