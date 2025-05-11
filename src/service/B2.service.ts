@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class B2Service {
@@ -7,8 +9,9 @@ export class B2Service {
     private apiUrl: string | null = null;
     private bucketId: string | null = null;
     private accountId: string | null = null;
+    private cacheTTLBuffer = 60; // 缓存提前过期时间（秒）
 
-    constructor() {
+    constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {
         this.initialize().catch((err) => {
             console.error('初始化B2服务失败:', err);
         });
@@ -75,31 +78,105 @@ export class B2Service {
      * @param validDuration 有效期（秒）
      * @returns 预签名URL
      */
-    async getPresignedUrl(filePath: string, validDuration: number = 3600): Promise<string> {
+    async getPresignedUrl(filePath: string, validDuration: number = 86400): Promise<string> {
         if (!this.authToken || !this.apiUrl || !this.bucketId) {
             throw new Error('服务未正确初始化');
         }
 
+        // 生成唯一缓存键
+        const cacheKey = `presigned:${filePath}:${validDuration}`;
+
         try {
-            // 调用b2_get_download_authorization生成下载授权
-            const response = await axios.post(`${this.apiUrl}/b2api/v3/b2_get_download_authorization`, {
-                bucketId: this.bucketId,
-                fileNamePrefix: filePath,
-                validDurationInSeconds: validDuration,
-            }, {
-                headers: {
-                    Authorization: this.authToken,
+            // 尝试从缓存获取
+            const cachedUrl: string | undefined = await this.cacheManager.get(cacheKey);
+            if (cachedUrl) {
+                console.log(`[缓存命中] ${filePath}`);
+                return cachedUrl;
+            }
+        } catch (error) {
+            console.error('缓存读取失败，继续生成URL', error);
+        }
+
+        // 缓存未命中时生成新URL
+        try {
+            const response = await axios.post(
+                `${this.apiUrl}/b2api/v3/b2_get_download_authorization`,
+                {
+                    bucketId: this.bucketId,
+                    fileNamePrefix: filePath,
+                    validDurationInSeconds: validDuration,
                 },
-            })
+                { headers: { Authorization: this.authToken } }
+            );
 
-            const downloadAuthToken = response.data.authorizationToken;
-            const downloadUrl = `${this.apiUrl}/file/LookTempo/${filePath}?Authorization=${downloadAuthToken}`;
+            const downloadUrl = `${this.apiUrl}/file/LookTempo/${filePath}?Authorization=${response.data.authorizationToken}`;
+            const ttl = Math.max(validDuration - this.cacheTTLBuffer, 60); // 确保最小缓存时间
 
-            console.log(downloadUrl);
+            await this.cacheManager.set(cacheKey, downloadUrl, ttl * 1000);
+            console.log(`[缓存存储] ${filePath} (有效至: ${new Date(Date.now() + ttl * 1000)})`);
             return downloadUrl;
+
         } catch (error) {
             console.error(`生成预签名URL失败: ${error.message}`);
             throw new Error(`生成预签名URL失败: ${error.message}`);
         }
+    }
+
+    // 按照文件名批量获取预签名URL
+    async getBatchPresignedUrlsByNames(
+        folderPath: string,
+        fileNames: string[]
+    ): Promise<Array<{ fileName: string; url: string }>> {
+        // 规范化文件夹路径
+        const normalizedFolder = folderPath.endsWith('/') ? folderPath : `${folderPath}/`;
+
+        // 添加缓存检查
+        const cacheKey = `folder:${normalizedFolder}`;
+        const cached: any[] | undefined = await this.cacheManager.get(cacheKey);
+
+        // 显式声明data类型
+        let data: { files: any[] };
+
+        if (cached) {
+            data = { files: cached };
+        } else {
+            const response = await axios.post(
+                `${this.apiUrl}/b2api/v3/b2_list_file_names`,
+                {
+                    bucketId: this.bucketId,
+                    prefix: normalizedFolder,
+                    delimiter: '/',
+                    maxFileCount: 1000
+                },
+                { headers: { Authorization: this.authToken } }
+            );
+            data = response.data;
+            await this.cacheManager.set(cacheKey, data.files, 300_000); // 缓存5分钟
+        }
+
+        // 优化后的文件映射创建逻辑
+        const fileMap = new Map<string, any>(
+            data.files.map(file => {
+                const cleanName = file.fileName
+                    .replace(normalizedFolder, '')
+                    .replace(/^\/+/, '') // 优化正则性能
+                    .toLowerCase();
+                return [cleanName, file];
+            })
+        );
+
+        // 并行处理优化（修改循环部分）
+        const result = await Promise.all(
+            fileNames.map(async (originalName) => {
+                const searchKey = originalName.replace(/^\//, '').toLowerCase();
+                const file = fileMap.get(searchKey);
+
+                return file
+                    ? { fileName: originalName, url: await this.getPresignedUrl(file.fileName) }
+                    : { fileName: originalName, url: '' };
+            })
+        );
+
+        return result.filter(Boolean);
     }
 }

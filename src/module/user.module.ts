@@ -9,17 +9,18 @@ import { JwtStrategy } from '../strategy/jwt.strategy';
 import { JwtGuard } from '../strategy/jwt.guard';
 import { PayPalService } from '../service/paypal.service';
 import { Feedback } from '../entities/feedback.entity';
+import { TwitterAuthService } from '../service/twitter.service';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([User, Feedback]),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
-            secret: '000000',
-            signOptions: { expiresIn: '7 days' },
+            secret: '000002',
+            signOptions: { expiresIn: '30d' }
         }),
     ],
-    providers: [UserService, JwtStrategy, JwtGuard, UserService, PayPalService],
+    providers: [UserService, JwtStrategy, JwtGuard, UserService, PayPalService, TwitterAuthService],
     controllers: [AuthController],
     exports: [JwtGuard, UserService],
 })

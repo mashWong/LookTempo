@@ -48,7 +48,7 @@ export class VideoController {
         return;
       }
 
-      this.recordLogger(req.headers.cookie, name + ': ' + (end / fileSize).toFixed(2));
+      // this.recordLogger(req.headers.cookie, name + ': ' + (end / fileSize).toFixed(2));
 
       const chunksize = (end - start) + 1;
       const file = fs.createReadStream(filePath, { start, end });
@@ -93,7 +93,7 @@ export class VideoController {
       res.writeHead(200, head);
       fs.createReadStream(filePath).pipe(res);
 
-      this.recordLogger(req.headers.cookie, name);
+      // this.recordLogger(req.headers.cookie, name);
 
     } catch (error) {
       throw new HttpException('Failed to download video', HttpStatus.INTERNAL_SERVER_ERROR);

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -32,7 +32,11 @@ export class User {
     @Column()
     avatar: string;
 
-    // 时间戳
+    // 余额
+    @Column()
+    balance: string;
+
+    // 注册的时间戳
     @Column()
     creatTime: string;
 }

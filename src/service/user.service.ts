@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { Feedback } from '../entities/feedback.entity';
 
-
 @Injectable()
 export class UserService {
     constructor(
@@ -39,7 +38,8 @@ export class UserService {
             password: user.password ?? '',
             source: user.source ?? '',
             creatTime: new Date().getTime().toString(),
-            checkSubTime: ''
+            checkSubTime: '',
+            balance: '',
         }
 
         return this.userRepository.save(newUser);

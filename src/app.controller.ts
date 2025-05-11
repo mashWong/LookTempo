@@ -5,6 +5,13 @@ import { LoggerService } from './service/loggers.service';
 import { UserService } from './service/user.service';
 import { B2Service } from './service/B2.service';
 
+const NotLog = [
+  'JqXp66ght5',
+  '7ryeUoUUv2',
+  'pA2HEZki41',
+  'Vnj7PZtvlK',
+  '9lzZz3cPrT'
+];
 
 @Controller('api')
 export class AppController {
@@ -18,12 +25,39 @@ export class AppController {
   @Get('list')
   async getPngFiles(@Req() req: Request, @Res() res: Response): Promise<Response> {
 
-    const chinaTime = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
-    this.recordLogger(req.headers.cookie, chinaTime, req.query.zone.toString());
-
     try {
-      const files = await this.appService.getPngFiles();
-      return res.json({ files });
+      const mapFiles = [
+        'IVE - I AM.avif',
+        'Nonono - Apink.avif',
+        'Bar Bar Bar - Crayon Pop.avif',
+        'APT - ROSE.avif',
+        'thumbs up - momoland.avif',
+        'Illusion - DuaLipa.avif',
+        'TOO BAD - GD.avif',
+        'UP - KARINA.avif',
+        'Really Like You - BABYMONSTER.avif',
+        'MINNIE - HER.avif',
+        'AOA - like a cat.avif',
+        'IVE - REBEL HEART.avif',
+        "Girls Generation - taxi.avif",
+        'Amateur - Nice Body.avif',
+        'ITZY - WANNABE.avif',
+        'Jun Hyoseong - Into you.avif',
+        'Red Velvet X Aespa - Beautiful Christmas.avif',
+        'T-ARA - 숨바꼭질.avif',
+        'jennie - Mantra.avif',
+        'Miniskirt - AOA.avif',
+        'girls - aespa.avif',
+        'Whiplash - aespa.avif',
+        'LIKE THAT - BABYMONSTER.avif',
+        'FOREVER - BABYMONSTER.avif'
+      ];
+      // const files = await this.b2Service.getBatchPresignedUrlsByNames('avif', mapFiles)
+
+      // 新增缓存控制头（关键修改部分）
+      res.setHeader('Cache-Control', 'public, max-age=604800'); // 7天缓存
+
+      return res.json({ files: mapFiles });
     } catch (error) {
       return res.status(500).json({ error: error.message });
     }
@@ -65,7 +99,6 @@ export class AppController {
     @Param('filePath') filePath: string,
     @Query('validDuration') validDuration?: number,
   ) {
-    console.log('getPresignedUrl', filePath, validDuration);
     try {
       const url = await this.b2Service.getPresignedUrl(filePath, validDuration);
       return { success: true, url };
@@ -84,12 +117,20 @@ export class AppController {
     }
   }
 
+  @Get('log')
+  async logger(@Req() req: Request, @Res() res: Response): Promise<Response> {
+    const chinaTime = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+    this.recordLogger(req.headers.cookie, chinaTime, req.query.zone.toString());
+
+    return res.json({ success: true });
+  }
+
   recordLogger(cookie: any, chinaTime: string, zone: string) {
     const list = cookie.split(';');
     list.forEach((item: string) => {
       if (item.indexOf('key=') !== -1) {
         const key = item.replace('key=', '').replace(/\s+/g, '');
-        if (key === 'dfc0be52bd9b386bd229308d8eff2f8f' || key === 'ecc79ad93b7dea8b068f6856bbd99b10') return;
+        if (NotLog.includes(key)) return;
         this.LoggerService.log(chinaTime + '  ' + key + ' ' + zone + '');
       }
     })
